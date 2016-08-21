@@ -1,41 +1,40 @@
 var cp = require('child_process');
 
+function getReturn(err, path) {
+  return {
+    err: err,
+    path: path
+  }
+}
+
 module.exports = function whereis(name, cb) {
-  var stdout_0 = cp.execSync('which ' + name);
-  stdout_0 = stdout_0.split('\n')[0]
-  if(stdout_0 === '' || stdout_0.charAt(0) !== '/') {
-    var stdout_1 = cp.execSync('whereis' + name);
-    if(stdout_1 === '' || stdout_1.indexOf( '/' ) === -1) {
-      var stdout_2 = cp.execSync('where ' + name);
-      if(stdout_2 === '' || stdout_2.indexOf('\\') === -1) {
-        var stdout_3 = cp.execSync('for %i in (' + name + '.exe) do @echo. %~$PATH:i');
-        if(stdout_3 === '' || stdout_3.indexOf('\\') === -1) {
-          return {
-            err: new Error('Could not find ' + name + ' on your system'),
-            path: null
-          };
+  try{
+    var stdout = cp.execSync('which ' + name).toString();
+    stdout = stdout.split('\n')[0];
+    if(stdout === '' || stdout.charAt(0) !== '/') {
+      try{
+        var stdout = cp.execSync('where ' + name).toString();
+        if(stdout === '' || stdout.indexOf('\\') === -1) {
+          try{
+            var stdout = cp.execSync('for %i in (' + name + '.exe) do @echo. %~$PATH:i').toString();
+            if(stdout === '' || stdout.indexOf('\\') === -1) {
+              return getReturn(new Error('Could not find ' + name + ' on your system'), null);
+            } else {
+              return getReturn(null, stdout);
+            }
+          }catch(e) {
+            return getReturn(e, null);
+          }
         } else {
-          return {
-            err: null,
-            path: stdout_3
-          };
+          return getReturn(null, stdout);
         }
-      } else {
-        return {
-          err: null,
-          path: stdout_2
-        };
+      } catch(e){
+        return getReturn(e, null);
       }
     } else {
-      return {
-        err: null,
-        path:　stdout_1.split(' ')[1]
-      };
+      return getReturn(null, stdout);
     }
-  } else {
-    return {
-      err: null,
-      path: stdout_0
-    };
+  } catch (e) {
+    return getReturn(e, null);
   }
 };

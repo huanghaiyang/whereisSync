@@ -13,22 +13,6 @@ test("when which found our program", function(t) {
   t.end();
 });
 
-test("when which did not found, whereis found it", function(t) {
-  var callcount = 0;
-  cp.execSync = function(name, cb) {
-    if (callcount === 0) {
-      callcount++;
-      return 'not found bin';
-    } else {
-      return 'bin: /etc/bin';
-    }
-  };
-
-  var result = whereis('bin');
-  t.equal(result.path, '/etc/bin', 'bin was found');
-  t.end();
-});
-
 test("when which did not found, whereis did not found, where will find", function(t) {
   var callcount = 0;
   cp.execSync = function(name, cb) {
