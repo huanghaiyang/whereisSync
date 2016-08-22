@@ -6,7 +6,7 @@ this project copyed from [https://github.com/vvo/node-whereis](https://github.co
 but I removed whereis cmd from it.
 
 ## note
-you can't use it to find files except binfile or execfile.
+you can't use it to find files except ./bin file or .exe file.
 
 ## install
 ```
@@ -21,8 +21,8 @@ console.log(result.path);
 // /usr/bin/wget
 ```
 
-## what is result
-A Object contains two property, meta type like:
+## what is the result
+An Object contains two property, meta type like:
 ```javascript
 {
   err: Object // or Error
